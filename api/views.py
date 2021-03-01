@@ -32,7 +32,6 @@ GenreSerializer,
 TitleWriteSerializer,
 TitleReadSerializer,
 ReviewReadSerializer,
-ReviewWriteSerializer,
 CommentSerializer
 )
 
@@ -128,11 +127,7 @@ class TitleViewSet(ModelViewSet):
 class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
     permission_classes = [IsOwnerOrReadOnlyPermission, IsAuthenticatedOrReadOnly]
-
-    def get_serializer_class(self):
-        if self.action in ('list', 'retrieve'):
-            return ReviewReadSerializer
-        return ReviewWriteSerializer
+    serializer_class = ReviewReadSerializer
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
@@ -140,10 +135,10 @@ class ReviewViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
-        if serializer.is_valid():
-            serializer.save(author=self.request.user, title=title)
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if self.action == 'create':
+            if len(Review.objects.filter(author=self.request.user)) != 0:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer.save(author=self.request.user, title=title)
 
 
 class CommentViewSet(ModelViewSet):

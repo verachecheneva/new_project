@@ -11,6 +11,6 @@ def validate_year(year):
         )
 
 
-def validate_scope(scope):
-    if scope > 10 or scope < 1:
+def validate_score(score):
+    if score > 10 or score < 1:
         raise ValidationError('Score must be from 1 to 10')

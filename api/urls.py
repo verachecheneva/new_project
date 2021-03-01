@@ -18,8 +18,8 @@ router_v1.register('users', UserViewSet)
 router_v1.register('categories', CategoryViewSet)
 router_v1.register('genres', GenreViewSet)
 router_v1.register('titles', TitleViewSet)
-router_v1.register('titles/(?P<title_id>[8-9]+)/reviews', ReviewViewSet)
-router_v1.register('titles/(?P<title_id>[8-9]+)/reviews/(?P<review_id>[8-9]+)/comments', CommentViewSet)
+router_v1.register('titles/(?P<title_id>[0-9]+)/reviews', ReviewViewSet)
+router_v1.register('titles/(?P<title_id>[0-9]+)/reviews/(?P<review_id>[0-9]+)/comments', CommentViewSet)
 
 auth_patterns = [
     path('email/', send_confirmation_code, name='send_confirmation_code'),

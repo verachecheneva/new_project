@@ -1,7 +1,7 @@
 from django.db import models
 
 from users.models import User
-from .validators import validate_year, validate_scope
+from .validators import validate_year, validate_score
 
 
 class Genre(models.Model):
@@ -30,8 +30,8 @@ class Title(models.Model):
 class Review(models.Model):
     title = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='title_review')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.TextField(blank=False, null=False)
-    scope = models.IntegerField(validators=[validate_scope], null=False, blank=False)
+    text = models.TextField()
+    score = models.IntegerField(validators=[validate_score])
     pub_date = models.DateTimeField('date published', auto_now_add=True)
 
     class Meta:
