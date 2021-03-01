@@ -26,15 +26,12 @@ class Title(models.Model):
     class Meta:
         ordering = ('year',)
 
-    def __str__(self):
-        return self.name
-
 
 class Review(models.Model):
     title = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='title_review')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.TextField(blank=True)
-    scope = models.IntegerField(validators=[validate_scope])
+    text = models.TextField(blank=False, null=False)
+    scope = models.IntegerField(validators=[validate_scope], null=False, blank=False)
     pub_date = models.DateTimeField('date published', auto_now_add=True)
 
     class Meta:

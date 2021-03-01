@@ -55,11 +55,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ReviewReadSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    title = TitleReadSerializer(read_only=True)
 
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
 
 
 class ReviewWriteSerializer(serializers.ModelSerializer):
@@ -68,15 +67,13 @@ class ReviewWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(queryset=User.objects.all(),
                                           slug_field='username')
-    review = serializers.PrimaryKeyRelatedField(queryset=Review.objects.all(),
-                                                pk_field='review_pk')
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'text', 'author', 'pub_date')
