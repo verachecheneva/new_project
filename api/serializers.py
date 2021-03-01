@@ -54,8 +54,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ReviewReadSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
     title = TitleReadSerializer(read_only=True)
-    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Review
@@ -63,10 +63,8 @@ class ReviewReadSerializer(serializers.ModelSerializer):
 
 
 class ReviewWriteSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(queryset=User.objects.all(),
-                                          slug_field='username')
-    title = serializers.PrimaryKeyRelatedField(queryset=Title.objects.all(),
-                                               pk_field='title_pk')
+    author = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username',
+                                          default=serializers.CurrentUserDefault)
 
     class Meta:
         model = Review
