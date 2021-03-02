@@ -135,9 +135,8 @@ class ReviewViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
-        if self.action == 'create':
-            if len(Review.objects.filter(author=self.request.user)) != 0:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+        if Review.objects.filter(author=self.request.user, title=title).exists():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         serializer.save(author=self.request.user, title=title)
 
 
@@ -155,4 +154,3 @@ class CommentViewSet(ModelViewSet):
         title = get_object_or_404(Title, pk=self.kwargs.get("title_id"))
         review = get_object_or_404(Review, pk=self.kwargs.get("review_id"), title=title)
         serializer.save(author=self.request.user, review=review)
-

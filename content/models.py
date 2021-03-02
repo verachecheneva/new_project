@@ -28,7 +28,7 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-    title = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='title_review')
+    title = models.ForeignKey(Title, on_delete=models.CASCADE, related_name='reviews', verbose_name='reviews')
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     score = models.IntegerField(validators=[validate_score])

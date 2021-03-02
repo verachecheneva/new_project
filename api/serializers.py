@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework import status
 
 from content.models import Title, Genre, Category, Review, Comment
 from users.models import User
@@ -29,10 +32,20 @@ class GenreSerializer(serializers.ModelSerializer):
 class TitleReadSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(read_only=True, many=True)
-    rating = serializers.IntegerField(read_only=True)
+    rating = serializers.SerializerMethodField()
+
+    def get_rating(self, obj):
+        if len(obj.reviews.all()) > 0:
+            summa = 0
+            for review in obj.reviews.all():
+                summa += review.score
+            count = obj.reviews.count()
+            rating = int(summa/count)
+            return rating
+        return None
 
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'name', 'year', 'category', 'genre', 'description', 'rating')
         model = Title
 
 
@@ -57,6 +70,15 @@ class UserSerializer(serializers.ModelSerializer):
 class ReviewReadSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(read_only=True,
                                           slug_field='username')
+
+    def validate(self, data):
+        if self.context['request'].method == 'PATCH':
+            return data
+        user = self.context['request'].user
+        title = (self.context['request'].parser_context['kwargs']['title_id'])
+        if Review.objects.filter(author=user, title_id=title).exists():
+            raise serializers.ValidationError('Вы уже поставили оценку')
+        return data
 
     class Meta:
         model = Review
